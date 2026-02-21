@@ -33,22 +33,15 @@ button { padding:10px 20px; margin:10px; font-size:16px; border-radius:6px; bord
 
 
 <h2>🎸バンド練習用簡易ミキサー</h2>
-<h3>🎵点描の唄🎵</h3>
+<h3>🎵Over🎵</h3>
 
 
-<div>🥁ドラム<br><input class="slider" type="range" min="0" max="1" step="0.01" value="1" id="volDr"></div>
-
-<div>🎸ベース<br><input class="slider" type="range" min="0" max="1" step="0.01" value="1" id="volBa"></div>
-
-<div>🎸ギター1<br><input class="slider" type="range" min="0" max="1" step="0.01" value="1" id="volGt1"></div>
-
-<div>🎸ギター2<br><input class="slider" type="range" min="0" max="1" step="0.01" value="1" id="volGt2"></div>
 
 <div>🎹キーボード<br><input class="slider" type="range" min="0" max="1" step="0.01" value="1" id="volPi"></div>
 
-<div>🎤ボーカル（女性）<br><input class="slider" type="range" min="0" max="1" step="0.01" value="1" id="volVo1"></div>
+<div>🎤ボーカル（男性メイン）<br><input class="slider" type="range" min="0" max="1" step="0.01" value="1" id="volVo1"></div>
 
-<div>🎤ボーカル（男性）<br><input class="slider" type="range" min="0" max="1" step="0.01" value="1" id="volVo2"></div>
+<div>🎤ボーカル（男性ハモリ）<br><input class="slider" type="range" min="0" max="1" step="0.01" value="1" id="volVo2"></div>
 
 
 
@@ -78,10 +71,7 @@ let isPlaying = false;
 let timer = null;
 
 const files = {
-  dr: "Dr.mp3",
-  ba: "Ba.mp3",
-  gt1: "Gt1.mp3",
-  gt2: "Gt2.mp3",
+
   pi: "Pi.mp3",
   vo1: "Vo1.mp3",
   vo2: "Vo2.mp3"
@@ -178,10 +168,7 @@ function setVol(key, val) {
   if (gainNodes[key]) gainNodes[key].gain.value = val;
 }
 
-document.getElementById("volDr").oninput = e => setVol('dr', e.target.value);
-document.getElementById("volBa").oninput = e => setVol('ba', e.target.value);
-document.getElementById("volGt1").oninput = e => setVol('gt1', e.target.value);
-document.getElementById("volGt2").oninput = e => setVol('gt2', e.target.value);
+
 document.getElementById("volPi").oninput = e => setVol('pi', e.target.value);
 document.getElementById("volVo1").oninput = e => setVol('vo1', e.target.value);
 document.getElementById("volVo2").oninput = e => setVol('vo2', e.target.value);

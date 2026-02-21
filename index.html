@@ -1,63 +1,36 @@
 <!DOCTYPE html>
-
 <html>
-
 <head>
-
 <meta charset="UTF-8">
-
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
 <title>Band Practice Mixer</title>
-
 <style>
-
-body { font-family: Arial; text-align:center; background:#111; color:white; }
-
-.slider { width: 80%; margin:10px; }
-
-.timeline { width:90%; margin-top:20px; }
-
-button { padding:10px 20px; margin:10px; font-size:16px; border-radius:6px; border:none; cursor:pointer; }
-
+body { font-family: Arial; text-align:center; background:#111; color:white; padding: 20px; }
+.slider-container { margin: 15px 0; background: #222; padding: 10px; border-radius: 8px; }
+.slider { width: 80%; margin:10px; cursor: pointer; }
+.timeline { width:90%; margin-top:20px; cursor: pointer; }
+button { padding:15px 30px; margin:10px; font-size:18px; border-radius:8px; border:none; cursor:pointer; font-weight: bold; }
 .play { background:#28a745; color:white; }
-
 .stop { background:#dc3545; color:white; }
-
 </style>
-
 </head>
-
 <body>
 
+<h2>🎸 バンド練習用簡易ミキサー</h2>
+<h3>🎵 Over 🎵</h3>
 
-
-<h2>🎸バンド練習用簡易ミキサー</h2>
-<h3>🎵Over🎵</h3>
-
-
-
-<div>🎤ボーカル（男性メイン）<br><input class="slider" type="range" min="0" max="1" step="0.01" value="1" id="volVo1"></div>
-
-<div>🎤ボーカル（男性ハモリ）<br><input class="slider" type="range" min="0" max="1" step="0.01" value="1" id="volVo2"></div>
-
+<div class="slider-container">🎹 ピアノ<br><input class="slider" type="range" min="0" max="1" step="0.01" value="1" id="volPi"></div>
+<div class="slider-container">🎤 ボーカル（メイン）<br><input class="slider" type="range" min="0" max="1" step="0.01" value="1" id="volVo1"></div>
+<div class="slider-container">🎤 ボーカル（ハモリ）<br><input class="slider" type="range" min="0" max="1" step="0.01" value="1" id="volVo2"></div>
 
 <input type="range" id="timeline" class="timeline" value="0" min="0" step="0.01">
-
 <br>
-
-<span id="timeDisplay">0:00</span>
-
+<span id="timeDisplay" style="font-size: 24px;">0:00</span>
 <br>
-
 <button class="play" id="btnPlay">▶ Play</button>
-
 <button class="stop" id="btnStop">■ Stop</button>
 
-
-
 <script>
-
 let context = null;
 let buffers = {};
 let gainNodes = {};
@@ -68,17 +41,21 @@ let isPlaying = false;
 let timer = null;
 
 const files = {
-
   pi: "Pi.mp3",
-
   vo1: "Vo1.mp3",
-  vo2: "Vo2.mp3",
-
+  vo2: "Vo2.mp3"
 };
 
 async function loadAudio() {
-  if (!context) context = new (window.AudioContext || window.webkitAudioContext)();
-  if (Object.keys(buffers).length > 0) return; // ロード済みならスキップ
+  // スマホ対策: ユーザー操作内でContextを初期化
+  if (!context) {
+    context = new (window.AudioContext || window.webkitAudioContext)();
+  }
+  if (context.state === 'suspended') {
+    await context.resume();
+  }
+  
+  if (Object.keys(buffers).length > 0) return;
 
   console.log("Loading audio...");
   for (let key in files) {
@@ -94,13 +71,15 @@ async function loadAudio() {
       console.error(`Failed to load ${files[key]}:`, e);
     }
   }
-  document.getElementById("timeline").max = buffers.dr.duration;
+  // 【修正】dr を pi に変更
+  if (buffers.pi) {
+    document.getElementById("timeline").max = buffers.pi.duration;
+  }
 }
 
 async function playAll() {
-  if (isPlaying) return; // 二重再生防止
+  if (isPlaying) return;
   await loadAudio();
-  await context.resume();
 
   sources = [];
   startTime = context.currentTime - pauseOffset;
@@ -109,7 +88,6 @@ async function playAll() {
     const src = context.createBufferSource();
     src.buffer = buffers[key];
     src.connect(gainNodes[key]);
-    // pauseOffset の位置から再生開始
     src.start(0, pauseOffset % buffers[key].duration);
     sources.push(src);
   }
@@ -125,7 +103,6 @@ function stopAll() {
   clearInterval(timer);
 }
 
-// 停止ボタン：完全に最初に戻す
 document.getElementById("btnStop").onclick = () => {
   stopAll();
   pauseOffset = 0;
@@ -135,7 +112,9 @@ document.getElementById("btnStop").onclick = () => {
 function updateTimeline() {
   if (!isPlaying) return;
   pauseOffset = context.currentTime - startTime;
-  if (pauseOffset >= buffers.dr.duration) {
+  
+  // 【修正】dr を pi に変更
+  if (buffers.pi && pauseOffset >= buffers.pi.duration) {
       stopAll();
       pauseOffset = 0;
   }
@@ -147,13 +126,12 @@ function updateUI(val) {
   document.getElementById("timeDisplay").textContent = formatTime(val);
 }
 
-// タイムライン操作
 document.getElementById("timeline").oninput = function() {
   const wasPlaying = isPlaying;
   stopAll();
   pauseOffset = parseFloat(this.value);
   updateUI(pauseOffset);
-  if (wasPlaying) playAll(); // 再生中だったらその場所から再開
+  if (wasPlaying) playAll();
 };
 
 function formatTime(sec) {
@@ -162,21 +140,16 @@ function formatTime(sec) {
   return m + ":" + s;
 }
 
-// ボリューム操作（初期値反映用）
 function setVol(key, val) {
   if (gainNodes[key]) gainNodes[key].gain.value = val;
 }
 
-
+// ピアノのボリュームスライダーも動くように修正
 document.getElementById("volPi").oninput = e => setVol('pi', e.target.value);
-
 document.getElementById("volVo1").oninput = e => setVol('vo1', e.target.value);
 document.getElementById("volVo2").oninput = e => setVol('vo2', e.target.value);
 
-
 document.getElementById("btnPlay").onclick = playAll;
 </script>
-
 </body>
-
 </html>

@@ -1,13 +1,8 @@
 <!DOCTYPE html>
-
 <html>
-
 <head>
-
 <meta charset="UTF-8">
-
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
 <title>Band Practice Mixer</title>
 <script src="https://cdn.jsdelivr.net/npm/midi-parser-js"></script>
 <style>
@@ -90,11 +85,9 @@ button:disabled { background:#555; cursor: not-allowed; opacity: 0.6; }
 
 </head>
 
-
 <body>
 <h2>🎸バンド練習用簡易ミキサー</h2>
 <h3>🎵Over🎵</h3>
-
 
 <div>
     🥁ドラム 
@@ -102,19 +95,12 @@ button:disabled { background:#555; cursor: not-allowed; opacity: 0.6; }
     <br>
     <input class="slider" type="range" min="0" max="1" step="0.01" value="1" id="volDr">
 </div>
-
 <div>🎸ベース<br><input class="slider" type="range" min="0" max="1" step="0.01" value="1" id="volBa"></div>
-
 <div>🎸エレキギター<br><input class="slider" type="range" min="0" max="1" step="0.01" value="1" id="volGt1"></div>
-
 <div>🎸アコギ<br><input class="slider" type="range" min="0" max="1" step="0.01" value="1" id="volGt2"></div>
-
 <div>🎹キーボード<br><input class="slider" type="range" min="0" max="1" step="0.01" value="1" id="volPi"></div>
-
 <div>🎤ボーカル（男性メイン）<br><input class="slider" type="range" min="0" max="1" step="0.01" value="1" id="volVo1"></div>
-
 <div>🎤ボーカル（男性ハモリ）<br><input class="slider" type="range" min="0" max="1" step="0.01" value="1" id="volVo2"></div>
-
 
 
 <input type="range" id="timeline" class="timeline" value="0" min="0" step="0.01">
@@ -315,8 +301,6 @@ document.getElementById('bpmInput').onchange = function() {
 // 起動時に実行
 loadAndParseMidi();
 
-
-
 let lastProcessedTime = -1;
 
 function updateTimeline() {
@@ -470,25 +454,23 @@ window.onload = () => {
   
   };
 
-
-
 </script>
 <div id="drum-panel" style="display: none;"> <div id="drum-handle">
         Drum Visualizer
         <span id="btnCloseDrum" style="float:right; cursor:pointer; padding:0 5px; font-weight:bold;">×</span>
     </div>
     <div id="drum-content">
-        <img src="drum_base.png" class="drum-base">
-        <img id="img-snare" src="snare.png" class="drum-part">
-        <img id="img-kick" src="kick.png" class="drum-part">
-        <img id="img-ride" src="ride.png" class="drum-part">
-        <img id="img-HiHatClose" src="HiHatClose.png" class="drum-part">
-        <img id="img-HiHatOpen" src="HiHatOpen.png" class="drum-part">
-        <img id="img-tamLo" src="tamLo.png" class="drum-part">
-        <img id="img-tamHi" src="tamHi.png" class="drum-part">
-        <img id="img-tamFloor" src="tamFloor.png" class="drum-part">
-        <img id="img-cr1" src="cr1.png" class="drum-part">
-        <img id="img-cr2" src="cr2.png" class="drum-part">
+        <img src="drum/drum_base.png" class="drum-base">
+        <img id="img-snare" src="drum/snare.png" class="drum-part">
+        <img id="img-kick" src="drum/kick.png" class="drum-part">
+        <img id="img-ride" src="drum/ride.png" class="drum-part">
+        <img id="img-HiHatClose" src="drum/HiHatClose.png" class="drum-part">
+        <img id="img-HiHatOpen" src="drum/HiHatOpen.png" class="drum-part">
+        <img id="img-tamLo" src="drum/tamLo.png" class="drum-part">
+        <img id="img-tamHi" src="drum/tamHi.png" class="drum-part">
+        <img id="img-tamFloor" src="drum/tamFloor.png" class="drum-part">
+        <img id="img-cr1" src="drum/cr1.png" class="drum-part">
+        <img id="img-cr2" src="drum/cr2.png" class="drum-part">
     </div>
 </div>
 </body>

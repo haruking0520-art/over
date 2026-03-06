@@ -265,13 +265,13 @@ async function loadAndParseMidi() {
                     let part = '';
                     if (note === 36) part = 'kick';
                     if (note === 38) part = 'snare';
-                    if (note === 51) part = 'ride';
                     if (note === 42) part = 'HiHatClose';
+                    if (note === 43) part = 'tamFloor';
                     if (note === 46) part = 'HiHatOpen';
                     if (note === 47) part = 'tamLo';
                     if (note === 48) part = 'tamHi';
-                    if (note === 43) part = 'tamFloor';
                     if (note === 49) part = 'cr1';
+                    if (note === 51) part = 'ride';
                     if (note === 57) part = 'cr2';
                     if (part) tempEvents.push({ time: time, part: part });
                 }
@@ -350,6 +350,44 @@ document.getElementById('bpmInput').addEventListener('input', () => {
     // ※再生中のupdate関数内で自動的にnewRatioが使われるようになります
     console.log("⚡ テンポをリアルタイム変更:", newBpm);
 });
+
+async function logMidiNotes() {
+    try {
+        const response = await fetch('Drum_Kit.mid');
+        const arrayBuffer = await response.arrayBuffer();
+        const midiData = MidiParser.parse(new Uint8Array(arrayBuffer));
+
+        console.log("%c--- MIDI使用ノート番号スキャン開始 ---", "color: #00ff00; font-weight: bold;");
+
+        midiData.track.forEach((track, index) => {
+            let trackName = "Unnamed Track";
+            let notes = new Set();
+
+            track.event.forEach(event => {
+                // トラック名 (metaType: 3)
+                if (event.metaType === 3) trackName = event.data;
+                
+                // ノートオン (type: 9) かつ ベロシティ > 0
+                if (event.type === 9 && event.data[1] > 0) {
+                    notes.add(event.data[0]);
+                }
+            });
+
+            if (notes.size > 0) {
+                const sortedNotes = Array.from(notes).sort((a, b) => a - b);
+                console.log(`Track [${index}] %c${trackName}`, "color: #ffcc00;");
+                console.log(`  👉 使用ノート: ${sortedNotes.join(", ")} (${notes.size}種類)`);
+            }
+        });
+
+        console.log("%c--- スキャン終了 ---", "color: #00ff00; font-weight: bold;");
+    } catch (e) {
+        console.error("MIDIスキャン失敗:", e);
+    }
+}
+
+// 実行
+logMidiNotes();
 
 </script>
 
